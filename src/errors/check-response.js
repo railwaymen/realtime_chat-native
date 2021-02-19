@@ -6,9 +6,7 @@ const CheckResponse = async (response) => {
   if (status === 204) {
     return true;
   } else if (status >= 200 && status < 400) {
-    const json = await response.json();
-
-    return json;
+    return response.json();
   } else if ([401, 403].includes(status)) {
     //logout
 

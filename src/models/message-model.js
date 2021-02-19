@@ -1,4 +1,4 @@
-import {API_SERVER_PATH, API_SUFFIX} from '@env';
+import {API_SERVER_PATH} from '@env';
 import formatDate from '../helpers/format-date';
 
 export default class MessageModel {

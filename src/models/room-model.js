@@ -8,7 +8,7 @@ export default class RoomModel {
     description,
     last_message_at,
     name,
-    participans,
+    participants,
     room_path,
     type,
     user_id,
@@ -19,7 +19,7 @@ export default class RoomModel {
     this.description = description;
     this.lastMessageAt = last_message_at && formatDate(last_message_at);
     this.name = name;
-    this.participans = participans;
+    this.participants = participants;
     this.roomPath = room_path;
     this.type = type;
     this.userId = user_id;

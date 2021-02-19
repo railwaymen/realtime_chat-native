@@ -11,7 +11,7 @@ export default class ApiService {
 
     const fetchProp = body
       ? {...basicFetchProp, body: JSON.stringify(body)}
-      : {...basicFetchProp};
+      : basicFetchProp;
 
     return fetch(path, fetchProp).then((response) => {
       const {method, headers, body} = fetchProp;

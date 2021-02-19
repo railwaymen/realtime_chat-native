@@ -1,21 +1,12 @@
-import React, {useContext} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
-import UserContext from '../../context/user-context';
-import mainColors from '../../styles/main-colors';
-import shadows from '../../styles/shadows';
-import BasicAuth from '../../helpers/basic-auth';
+import React from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+
+import BasicAuthImage from '../../shared/basic-auth-image';
 
 export default function AvatarPlaceholder({url = ''}) {
-  //console.log(url);
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.tinyLogo}
-        source={{
-          uri: url,
-          headers: BasicAuth(),
-        }}
-      />
+      <BasicAuthImage url={url} style={styles.image} />
     </View>
   );
 }
@@ -29,7 +20,7 @@ const styles = StyleSheet.create({
     //  height: 50,
     // borderRadius: 25,
   },
-  tinyLogo: {
+  image: {
     width: 40,
     height: 40,
     borderRadius: 20,

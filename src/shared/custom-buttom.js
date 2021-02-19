@@ -19,6 +19,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: 'center',
     maxHeight: 40,
+    width: '80%',
+    alignSelf: 'center',
+    marginBottom: 10,
   },
   text: {
     color: mainColors.darkGray,

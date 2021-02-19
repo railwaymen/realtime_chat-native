@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import mainColors from '../styles/main-colors';
 
-import MessagesService from '../services/messages-service';
+import RoomsService from '../services/rooms-service';
 import RoomContainer from '../components/messages/room-container';
 
 export default function HomeScreen({navigation: {navigate}}) {
@@ -16,7 +16,7 @@ export default function HomeScreen({navigation: {navigate}}) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    MessagesService.getRooms().then((fetchedRooms) => {
+    RoomsService.getRooms().then((fetchedRooms) => {
       setRoomsList(fetchedRooms);
       setIsLoading(false);
     });
@@ -38,7 +38,6 @@ export default function HomeScreen({navigation: {navigate}}) {
 
     navigate('ChatStack', {
       screen: 'ChatScreen',
-      initial: false,
       params: {
         roomId,
         roomName,
@@ -47,15 +46,16 @@ export default function HomeScreen({navigation: {navigate}}) {
   };
 
   const removeRoom = ({item: {id}}) => {
-    console.log(id);
     setRoomsList((prevState) => prevState.filter((room) => room.id !== id));
   };
 
   const redirectToRoomSettings = ({item}) => {
+    const {name} = item;
+
     navigate('ChatStack', {
       screen: 'EditRoomScreen',
-      initial: false,
-      params: {roomName: 'dd'},
+      // initial: false,
+      params: {roomName: `Edit Room - ${name}`, roomDetails: item},
     });
   };
 

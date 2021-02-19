@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
 import mainColors from '../styles/main-colors';
 import MessagesService from '../services/messages-service';
+import RoomsService from '../services/rooms-service';
 import UserContext from '../context/user-context';
 import ChatContainer from '../components/messages/chat-container';
 import MessageModel from '../models/message-model';
@@ -46,7 +47,7 @@ export default class ChatScreen extends Component {
       },
     } = this.props;
 
-    const webSocket = await MessagesService.roomWebSocketSubscribe(roomId);
+    const webSocket = await RoomsService.roomWebSocketSubscribe(roomId);
     this.setState({webSocket});
 
     webSocket.onmessage = ({data}) => {

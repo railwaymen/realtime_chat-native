@@ -10,11 +10,11 @@ const App = () => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <AuthHook>
-        <UserHook>
+      <UserHook>
+        <AuthHook>
           <MainStack />
-        </UserHook>
-      </AuthHook>
+        </AuthHook>
+      </UserHook>
     </View>
   );
 };

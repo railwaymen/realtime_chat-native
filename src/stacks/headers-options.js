@@ -5,15 +5,6 @@ import DrawerButton from '../shared/drawer-button';
 import CustomHeaderTitle from '../shared/custom-header-title';
 import RightChatHeader from '../shared/right-chat-header';
 
-export const defaultAutorizedHeaderOptions = {
-  title: 'ChatApp',
-  headerStyle: {
-    backgroundColor: mainColors.darkGray,
-    shadowColor: 'transparent',
-  },
-  headerTintColor: mainColors.lightGray,
-};
-
 export const defaultStackOptions = {
   headerTitle: 'ChatApp',
   headerStyle: {
@@ -54,14 +45,41 @@ export const aboutStackOptions = ({navigation: {goBack}}) => {
   };
 };
 
-export const chatHeader = ({
-  navigation: {navigate, goBack},
+export const defaultChatStackOptions = ({
+  navigation: {navigate},
   route: {
     params: {roomName = ''},
   },
 }) => {
+  const onPress = () => {
+    navigate('AutorizedTabs', {
+      screen: 'MessagesScreen',
+    });
+  };
+
   return {
+    //  headerTitle: 'ChatApp',
+    headerStyle: {
+      backgroundColor: mainColors.darkGray,
+      shadowColor: 'transparent',
+    },
+    headerTintColor: mainColors.lightGray,
+    navigationOptions: {
+      headerVisible: false,
+    },
+    headerLeft: () => <BackButton onPress={onPress} />,
     headerTitle: () => <CustomHeaderTitle title={roomName} />,
+  };
+};
+
+export const chatHeader = ({
+  navigation: {navigate, goBack},
+  // route: {
+  //   params: {roomName = ''},
+  // },
+}) => {
+  return {
+    //  headerTitle: () => <CustomHeaderTitle title={roomName} />,
     headerRight: () => <RightChatHeader navigate={navigate} />,
     headerTitleAlign: 'left',
   };

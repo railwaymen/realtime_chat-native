@@ -1,10 +1,7 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import AutorizedTabs from './autorized-tabs';
-import {
-  defaultAutorizedHeaderOptions,
-  defaultTabsHeaderOptions,
-} from '../stacks/headers-options';
+import {defaultTabsHeaderOptions} from '../stacks/headers-options';
 import ChatStack from './chat-stack';
 
 const Stack = createStackNavigator();
