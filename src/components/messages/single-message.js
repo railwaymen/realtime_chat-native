@@ -18,42 +18,47 @@ export default function SingleMessage({message = {}}) {
 
   const isCurrentUserMessage = id === loggedUserId;
 
+  const messageStyles = isCurrentUserMessage
+    ? {
+        positionStyle: styles.rightSideMessage,
+        textStyle: styles.rightSideText,
+        iconColor: mainColors.lightGray,
+        iconBackground: mainColors.darkGray,
+        createdAtTextAlign: 'right',
+      }
+    : {
+        positionStyle: styles.leftSideMessage,
+        textStyle: styles.leftSideText,
+        iconColor: mainColors.darkGray,
+        iconBackground: mainColors.sand,
+        createdAtTextAlign: 'left',
+      };
+
+  const {
+    positionStyle,
+    textStyle,
+    iconColor,
+    iconBackground,
+    createdAtTextAlign,
+  } = messageStyles;
+
   return (
     <View style={styles.container}>
-      {isCurrentUserMessage ? (
-        <View
-          style={[
-            styles.messageContainer,
-            shadows.container,
-            styles.rightSideMessage,
-          ]}>
-          <Text style={[styles.messageContainer, styles.rightSideText]}>
-            {body}
-          </Text>
-          <View style={styles.avatar}>
-            <AvatarPlaceholder url={avatarUrl} />
-          </View>
+      <View style={[styles.messageContainer, shadows.container, positionStyle]}>
+        <Text style={[styles.messageContainer, textStyle]}>{body}</Text>
+        <View style={styles.avatar}>
+          <AvatarPlaceholder
+            url={avatarUrl}
+            iconColor={iconColor}
+            iconSize={25}
+            containerStyle={{
+              ...styles.iconContainerStyle,
+              backgroundColor: iconBackground,
+            }}
+          />
         </View>
-      ) : (
-        <View
-          style={[
-            styles.messageContainer,
-            shadows.container,
-            styles.leftSideMessage,
-          ]}>
-          <View style={styles.avatar}>
-            <AvatarPlaceholder url={avatarUrl} />
-          </View>
-          <Text style={[styles.messageContainer, styles.leftSideText]}>
-            {body}
-          </Text>
-        </View>
-      )}
-      <Text
-        style={[
-          styles.date,
-          {textAlign: isCurrentUserMessage ? 'right' : 'left'},
-        ]}>
+      </View>
+      <Text style={[styles.date, {textAlign: createdAtTextAlign}]}>
         {createdAt}
       </Text>
     </View>
@@ -78,6 +83,7 @@ const styles = StyleSheet.create({
   leftSideMessage: {
     backgroundColor: mainColors.darkGray,
     alignSelf: 'flex-start',
+    flexDirection: 'row-reverse',
   },
   rightSideMessage: {
     backgroundColor: mainColors.sand,
@@ -98,5 +104,12 @@ const styles = StyleSheet.create({
   },
   avatar: {
     alignSelf: 'flex-start',
+  },
+  iconContainerStyle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

@@ -1,39 +1,62 @@
-import React, {useContext} from 'react';
-import {View, Text, Button, StyleSheet, SafeAreaView} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
+
 import AuthContext from '../../context/auth-context';
 import UserContext from '../../context/user-context';
 import mainColors from '../../styles/main-colors';
-import BasicAuthImage from '../../shared/basic-auth-image';
+import DrawerNavigationButton from '../drawer/drawer-navigation-button';
+import UserModel from '../../models/user-model';
+import AvatarPlaceholder from '../images/avatar-placeholder';
 
-const CustomDrawer = ({navigate}) => {
+const CustomDrawer = ({navigate, route}) => {
   const {logout} = useContext(AuthContext);
-  const {
-    loggedUserProfile: {avatarUrl, username, email},
-    loggedUserProfile,
-  } = useContext(UserContext);
+  const {loggedUserProfile} = useContext(UserContext);
+  const [userProfile, setUserProfile] = useState(new UserModel({}));
+  const {username, email, avatarUrl, imageKey} = userProfile;
+
+  useEffect(() => {
+    setUserProfile(loggedUserProfile);
+  }, []);
+
+  useEffect(() => {
+    setUserProfile(loggedUserProfile);
+  }, [loggedUserProfile]);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.drawerContainer}>
         <View style={styles.content}>
           <View style={styles.userProfile}>
-            <BasicAuthImage url={avatarUrl} style={styles.profileImage} />
+            {avatarUrl && (
+              <AvatarPlaceholder
+                url={avatarUrl}
+                iconColor={mainColors.darkGray}
+                iconSize={60}
+                containerStyle={styles.iconContainerStyle}
+                imageKey={imageKey}
+              />
+            )}
             <View style={styles.userData}>
               <Text style={styles.username}>{username}</Text>
               <Text style={styles.email}>{email}</Text>
             </View>
           </View>
           <View style={styles.navigationContainer}>
-            <Button title="Home" onPress={() => navigate('AuthorizedStack')} />
-            <Button
+            <DrawerNavigationButton
+              title="Home"
+              onPress={() => navigate('AuthorizedStack')}
+            />
+            <DrawerNavigationButton
               title="Edit Profile"
               onPress={() => navigate('EditProfileStack')}
             />
-            <Button title="About" onPress={() => navigate('AboutStack')} />
+            <DrawerNavigationButton
+              title="About"
+              onPress={() => navigate('AboutStack')}
+            />
           </View>
         </View>
-        <View style={styles.logoutContainer}>
-          <Button title="Logout" onPress={logout} />
-        </View>
+        <DrawerNavigationButton title="Logout" onPress={logout} />
       </View>
     </SafeAreaView>
   );
@@ -55,6 +78,7 @@ const styles = StyleSheet.create({
   userProfile: {
     padding: 10,
     flexDirection: 'row',
+    marginBottom: 20,
   },
   profileImage: {
     width: 100,
@@ -76,10 +100,15 @@ const styles = StyleSheet.create({
     color: mainColors.lightGray,
   },
   navigationContainer: {
-    // backgroundColor: mainColors.black,
+    marginTop: 20,
   },
-  logoutContainer: {
-    // backgroundColor: mainColors.darkGray,
+  iconContainerStyle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: mainColors.sand,
   },
 });
 

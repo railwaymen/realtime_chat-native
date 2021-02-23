@@ -14,6 +14,7 @@ import mainColors from '../styles/main-colors';
 import FormInput from '../components/form-input';
 import CustomAsyncStorage from '../helpers/custom-async-storage';
 import AuthContext from '../context/auth-context';
+import UserContext from '../context/user-context';
 import CustomButtom from '../shared/custom-buttom';
 import logoImage from '../../assets/images/logo.png';
 
@@ -21,13 +22,21 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('user1@example.com');
   const [password, setPassword] = useState('password');
   const {setIsAutorizedStack} = useContext(AuthContext);
+  const {setLoggedUserProfile} = useContext(UserContext);
 
   const onPress = () => {
     UserService.login({email, password})
-      .then((authData) => CustomAsyncStorage.assign(authData))
-      .finally(() => {
+      .then((authData) => {
+        CustomAsyncStorage.assign(authData);
+      })
+      .finally(async () => {
+        await getUserProfile();
         setIsAutorizedStack(true);
       });
+  };
+
+  const getUserProfile = () => {
+    return UserService.getLoggedUserProfile().then(setLoggedUserProfile);
   };
 
   return (

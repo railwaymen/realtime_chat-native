@@ -7,5 +7,6 @@ export default class UserModel {
     this.email = email;
     this.roomsActivity = rooms_activity;
     this.avatarUrl = avatar_url ? API_SERVER_PATH + avatar_url : undefined;
+    this.imageKey = Date.now();
   }
 }

@@ -1,8 +1,14 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
 import mainColors from '../../styles/main-colors';
 
-export default function DrawerNavigationButton({title, onPress}) {
+export default function ActionSheetButton({title, onPress}) {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <Text style={styles.text}>{title}</Text>
@@ -12,24 +18,17 @@ export default function DrawerNavigationButton({title, onPress}) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    // marginVertical: 10,
-    //  marginHorizontal: 10,
-
-    // borderRadius: 25,
     backgroundColor: mainColors.lightGray,
-    //flex: 6,
-    width: '70%',
-    alignSelf: 'center',
-
-    justifyContent: 'center',
     borderRadius: 20,
-    paddingVertical: 5,
+    borderBottomWidth: 1,
+    borderColor: mainColors.sand,
     marginVertical: 10,
   },
   text: {
     color: mainColors.darkGray,
-    // textAlign: 'center',
     fontSize: 20,
+    marginLeft: 20,
+    fontWeight: '300',
+    marginBottom: 5,
   },
 });

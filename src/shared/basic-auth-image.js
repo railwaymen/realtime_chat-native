@@ -2,14 +2,21 @@ import React from 'react';
 import {Image} from 'react-native';
 import BasicAuth from '../helpers/basic-auth';
 
-const BasicAuthImage = ({url = '', style = {}}) => {
+const BasicAuthImage = ({
+  url = '',
+  style = {},
+  imageKey = Date.now(),
+  setDisplayImage = () => {},
+}) => {
   return (
     <Image
       style={style}
+      key={imageKey}
       source={{
         uri: url,
         headers: BasicAuth(),
       }}
+      onError={() => setDisplayImage(false)}
     />
   );
 };

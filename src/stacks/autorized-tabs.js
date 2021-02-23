@@ -1,11 +1,8 @@
-import React, {useEffect, useContext} from 'react';
-
+import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import UserContext from '../context/user-context';
 import NewGroupScreen from '../screens/new-group-screen';
 import UsersScreen from '../screens/users-screen';
 import MessagesScreen from '../screens/messages-screen';
-import UserService from '../services/user-service';
 import customBottomBarProp from '../helpers/custom-bottom-bar';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
@@ -17,17 +14,6 @@ import {
 const Tab = createBottomTabNavigator();
 
 export default function AutorizedTab() {
-  const {setLoggedUserProfile} = useContext(UserContext);
-
-  useEffect(() => {
-    getUserProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getUserProfile = () => {
-    return UserService.getLoggedUserProfile().then(setLoggedUserProfile);
-  };
-
   return (
     <Tab.Navigator
       initialRouteName="MessagesScreen"

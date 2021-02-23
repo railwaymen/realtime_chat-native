@@ -17,4 +17,25 @@ export default class UserService {
       url: 'users/profile',
     }).then((userProfile) => new UserModel(userProfile));
   };
+
+  static uploadImage = (imagePath) => {
+    const data = new FormData();
+
+    const photo = {
+      uri: imagePath,
+      type: 'image/jpg',
+      name: 'photo.jpg',
+    };
+
+    data.append('avatar', photo);
+
+    return AuthorizationService.put({
+      url: `users`,
+      body: data,
+      additionalHeaderParams: {
+        'Content-Type': 'multipart/form-data',
+      },
+      isStringify: false,
+    }).then((res) => new UserModel(res));
+  };
 }
