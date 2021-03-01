@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     maxHeight: 40,
     width: '80%',
     alignSelf: 'center',
-    marginBottom: 10,
+    marginVertical: 10,
   },
   text: {
     color: mainColors.darkGray,

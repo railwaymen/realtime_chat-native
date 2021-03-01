@@ -18,20 +18,26 @@ export default class UserService {
     }).then((userProfile) => new UserModel(userProfile));
   };
 
+  static getUsers = () => {
+    return AuthorizationService.get({
+      url: 'users',
+    }).then((users) => users.map((user) => new UserModel(user)));
+  };
+
   static uploadImage = (imagePath) => {
-    const data = new FormData();
+    const form = new FormData();
 
     const photo = {
       uri: imagePath,
       type: 'image/jpg',
-      name: 'photo.jpg',
+      name: `avatar-${Date.now()}.jpg`,
     };
 
-    data.append('avatar', photo);
+    form.append('avatar', photo);
 
     return AuthorizationService.put({
       url: `users`,
-      body: data,
+      body: form,
       additionalHeaderParams: {
         'Content-Type': 'multipart/form-data',
       },

@@ -48,7 +48,7 @@ export const aboutStackOptions = ({navigation: {goBack}}) => {
 export const defaultChatStackOptions = ({
   navigation: {navigate},
   route: {
-    params: {roomName = ''},
+    params: {headerTitle = ''},
   },
 }) => {
   const onPress = () => {
@@ -58,7 +58,6 @@ export const defaultChatStackOptions = ({
   };
 
   return {
-    //  headerTitle: 'ChatApp',
     headerStyle: {
       backgroundColor: mainColors.darkGray,
       shadowColor: 'transparent',
@@ -68,19 +67,28 @@ export const defaultChatStackOptions = ({
       headerVisible: false,
     },
     headerLeft: () => <BackButton onPress={onPress} />,
-    headerTitle: () => <CustomHeaderTitle title={roomName} />,
+    headerTitle: () => <CustomHeaderTitle title={headerTitle} />,
   };
 };
 
 export const chatHeader = ({
-  navigation: {navigate, goBack},
-  // route: {
-  //   params: {roomName = ''},
-  // },
+  navigation: {navigate},
+  route: {
+    params: {isEditMembersEnabled = false, roomDetails = {}},
+  },
 }) => {
   return {
-    //  headerTitle: () => <CustomHeaderTitle title={roomName} />,
-    headerRight: () => <RightChatHeader navigate={navigate} />,
+    headerRight: () => (
+      <RightChatHeader
+        navigate={navigate}
+        isEditMembersEnabled={isEditMembersEnabled}
+        roomDetails={roomDetails}
+      />
+    ),
     headerTitleAlign: 'left',
   };
 };
+
+export const editMembersHeader = ({navigation: {goBack}}) => ({
+  headerLeft: () => <BackButton onPress={goBack} />,
+});

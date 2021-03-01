@@ -75,9 +75,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   icon: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
     marginHorizontal: 10,
+    paddingVertical: 6,
   },
   isTypingContainer: {
     height: 20,

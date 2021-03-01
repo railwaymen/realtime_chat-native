@@ -31,7 +31,6 @@ export default function AutorizedTab() {
         name="MessagesScreen"
         component={MessagesScreen}
         options={{
-          unmountOnBlur: true,
           tabBarIcon: ({color}) => (
             <FontAwesomeIcon icon={faCommentDots} color={color} size={25} />
           ),

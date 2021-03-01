@@ -18,6 +18,7 @@ export default function ChatContainer({
   sendMessage,
   isLoading = true,
   typingUser,
+  onEndReached,
 }) {
   return (
     <View style={styles.container}>
@@ -34,7 +35,10 @@ export default function ChatContainer({
                 data={messages}
                 renderItem={(message) => <SingleMessage message={message} />}
                 keyExtractor={(message) => message.id.toString()}
-                contentContainerStyle={styles.flatlistStyle}
+                //   contentContainerStyle={styles.flatlistStyle}
+                onEndReached={onEndReached}
+                // contentContainerStyle={{flex: 1}}
+                //  onEndReachedThreshold={0.5}
                 inverted
               />
               <ChatInput

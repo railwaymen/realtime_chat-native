@@ -7,7 +7,7 @@ export default defineFetchProp = ({
 }) => ({
   method,
   headers: {
-    Accept: 'application/json',
+    accept: 'application/json',
     'Content-Type': 'application/json',
     Token: token,
     ...additionalHeaderParams,

@@ -21,7 +21,7 @@ export default class ApiService {
     });
 
     const preparedBody = isStringify ? JSON.stringify(body) : body;
-
+    console.log(isStringify);
     const fetchProp = body
       ? {...basicFetchProp, body: preparedBody}
       : basicFetchProp;

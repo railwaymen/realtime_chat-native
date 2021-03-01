@@ -12,14 +12,20 @@ export default function ImageActionSheet({
 }) {
   const actionButtons = [
     {
+      id: 0,
       title: 'Camera',
       onPress: () => handleImagePicker('camera'),
     },
     {
-      title: 'Picker',
+      id: 1,
+      title: 'Gallery',
       onPress: () => handleImagePicker('picker'),
     },
-    {title: 'Cancel', onPress: setActionSheetVisibility},
+    {
+      id: 2,
+      title: 'Cancel',
+      onPress: setActionSheetVisibility,
+    },
   ];
 
   return (
@@ -28,8 +34,8 @@ export default function ImageActionSheet({
         <View style={styles.headerContainer}>
           <Text style={styles.text}>Select Option</Text>
         </View>
-        {actionButtons.map(({title, onPress}) => (
-          <ActionSheetButton title={title} onPress={onPress} />
+        {actionButtons.map(({id, title, onPress}) => (
+          <ActionSheetButton key={id} title={title} onPress={onPress} />
         ))}
       </View>
     </ActionSheet>

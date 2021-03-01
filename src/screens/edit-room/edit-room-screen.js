@@ -8,11 +8,12 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import FormInput from '../components/form-input';
-import CustomButtom from '../shared/custom-buttom';
-import RoomsService from '../services/rooms-service';
 
-import mainColors from '../styles/main-colors';
+import FormInput from '../../components/form-input';
+import CustomButtom from '../../shared/custom-buttom';
+import RoomsService from '../../services/rooms-service';
+
+import mainColors from '../../styles/main-colors';
 
 export default function EditRoomScreen({
   navigation: {navigate},

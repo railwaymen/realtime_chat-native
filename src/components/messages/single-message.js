@@ -9,7 +9,7 @@ export default function SingleMessage({message = {}}) {
   const {
     body,
     createdAt,
-    user: {id, avatarUrl},
+    user: {id, username, avatarUrl},
   } = message.item;
 
   const {
@@ -44,6 +44,11 @@ export default function SingleMessage({message = {}}) {
 
   return (
     <View style={styles.container}>
+      {!isCurrentUserMessage && (
+        <Text style={[styles.date, {textAlign: createdAtTextAlign}]}>
+          {username}
+        </Text>
+      )}
       <View style={[styles.messageContainer, shadows.container, positionStyle]}>
         <Text style={[styles.messageContainer, textStyle]}>{body}</Text>
         <View style={styles.avatar}>

@@ -10,7 +10,7 @@ const formatDate = (date) => {
     return moment(oldTime).fromNow();
   }
 
-  return oldTime.format('MM/DD/YYYY');
+  return oldTime.format('DD/MM/YYYY');
 };
 
 export default formatDate;

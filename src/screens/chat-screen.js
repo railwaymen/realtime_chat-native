@@ -1,12 +1,11 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
+import {StyleSheet, SafeAreaView} from 'react-native';
 import mainColors from '../styles/main-colors';
 import MessagesService from '../services/messages-service';
-import RoomsService from '../services/rooms-service';
-import UserContext from '../context/user-context';
 import ChatContainer from '../components/messages/chat-container';
 import MessageModel from '../models/message-model';
 import SocketMessage from '../helpers/socket-message';
+import WebSocketContext from '../context/web-socket-context';
 
 const selectEventType = ({message, type}) => {
   if (message?.message === 'typing') {
@@ -25,34 +24,59 @@ export default class ChatScreen extends Component {
       messages: [],
       inputMessage: '',
       isLoading: true,
-      webSocket: null,
       typingUser: {},
     };
   }
-  static contextType = UserContext;
+  static contextType = WebSocketContext;
 
   componentDidMount() {
+    const {
+      props: {
+        route: {
+          params: {
+            roomDetails: {id: roomId},
+          },
+        },
+      },
+      context: {removeUnreadRoomIdStatus},
+    } = this;
+
+    removeUnreadRoomIdStatus(roomId);
     this.websocketHandler();
   }
 
   componentWillUnmount() {
-    const {webSocket} = this.state;
-    webSocket.close();
+    const {
+      setSubscribedRoomChannelId,
+      basicSocketEventsBehavior,
+    } = this.context;
+
+    setSubscribedRoomChannelId(null);
+    basicSocketEventsBehavior();
   }
 
   websocketHandler = async () => {
     const {
-      route: {
-        params: {roomId},
+      props: {
+        route: {
+          params: {
+            roomDetails: {id: roomId},
+          },
+        },
       },
-    } = this.props;
+      context: {webSocket, subscribeRoomChannel},
+    } = this;
 
-    const webSocket = await RoomsService.roomWebSocketSubscribe(roomId);
-    this.setState({webSocket});
+    await subscribeRoomChannel(roomId);
+    await this.getMessages({roomId}).then(() =>
+      this.setState({
+        isLoading: false,
+      }),
+    );
 
-    webSocket.onmessage = ({data}) => {
+    webSocket.current.onmessage = ({data}) => {
       const {type, message} = JSON.parse(data);
-
+      console.log('chat:', type, message);
       const eventType = selectEventType({message, type});
 
       switch (eventType) {
@@ -62,6 +86,9 @@ export default class ChatScreen extends Component {
           });
           break;
         case 'room_message_create':
+          if (roomId !== message.data.room_id) {
+            return;
+          }
           const {data: messageData} = message;
           const newMessage = new MessageModel(messageData);
           this.setState((prevState) => {
@@ -77,18 +104,16 @@ export default class ChatScreen extends Component {
           break;
       }
     };
+  };
 
-    webSocket.onerror = (e) => {
-      console.log('error');
-      console.log(e);
-      console.log(e.message);
-    };
-
-    webSocket.onclose = (e) => {
-      console.log('closed');
-      console.log(e);
-      console.log(e.code, e.reason);
-    };
+  getMessages = ({roomId, lastMessageId = null}) => {
+    return MessagesService.getMessages({roomId, lastMessageId}).then((res) => {
+      this.setState((prevState) => {
+        return {
+          messages: prevState.messages.concat(res.reverse()),
+        };
+      });
+    });
   };
 
   updateInputMessage = (value) => {
@@ -101,38 +126,60 @@ export default class ChatScreen extends Component {
       state: {inputMessage},
       props: {
         route: {
-          params: {roomId},
+          params: {
+            roomDetails: {id: roomId},
+          },
         },
       },
     } = this;
-    console.log(roomId, inputMessage);
+
     return MessagesService.sendMessage({
       roomId,
       message: inputMessage,
-    }).then(() => this.setState({inputMessage: ''}));
+    }).then(() => {
+      this.updateIsTyping();
+      this.setState({inputMessage: ''});
+    });
   };
 
   updateIsTyping = (isTyping = false) => {
     const {
-      state: {webSocket},
       props: {
         route: {
-          params: {roomId},
+          params: {
+            roomDetails: {id: roomId},
+          },
         },
       },
+      context: {webSocket},
     } = this;
+
     const isTypingSocketMessage = SocketMessage.userIsTyping({
       roomId,
       typing: isTyping,
     });
 
-    webSocket.send(JSON.stringify(isTypingSocketMessage));
+    return webSocket.current.send(JSON.stringify(isTypingSocketMessage));
+  };
+
+  onEndReached = () => {
+    const {
+      props: {
+        route: {
+          params: {
+            roomDetails: {id: roomId},
+          },
+        },
+      },
+      state: {messages},
+    } = this;
+
+    const {id: lastMessageId} = messages[messages.length - 1];
+
+    return this.getMessages({roomId, lastMessageId});
   };
 
   render() {
-    const {
-      loggedUserProfile: {id: loggedUserId},
-    } = this.context;
     const {messages, inputMessage, isLoading, typingUser} = this.state;
 
     return (
@@ -144,6 +191,7 @@ export default class ChatScreen extends Component {
           sendMessage={this.sendMessage}
           isLoading={isLoading}
           typingUser={typingUser}
+          onEndReached={this.onEndReached}
         />
       </SafeAreaView>
     );

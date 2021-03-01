@@ -1,10 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
 import mainColors from '../../styles/main-colors';
 import SwipeComponent from './swipe-component';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faUsers} from '@fortawesome/free-solid-svg-icons/';
+import {faUsers, faUserCog} from '@fortawesome/free-solid-svg-icons/';
+import UserContext from '../../context/user-context';
+import WebSocketContext from '../../context/web-socket-context';
 
 export default function RoomContainer({
   room: {item: roomDetails},
@@ -19,14 +21,29 @@ export default function RoomContainer({
     lastMessageAt,
     participants,
     type,
+    userId: createdByUserID,
   } = roomDetails;
+
+  const {
+    loggedUserProfile: {id: currentUserId},
+  } = useContext(UserContext);
+
+  const {unreadRoomsIdsStatus} = useContext(WebSocketContext);
+  const [isUnreadStatusActive, setIsUnreadStatusActive] = useState(false);
+
+  const isRoomCreatedByCurrentUser = createdByUserID === currentUserId;
+
+  useEffect(() => {
+    setIsUnreadStatusActive(unreadRoomsIdsStatus.includes(id));
+  }, [unreadRoomsIdsStatus]);
 
   return (
     <SwipeComponent
-      onPress={() => onPress(roomDetails)}
+      onPress={() => onPress({roomDetails, isRoomCreatedByCurrentUser})}
       room={roomDetails}
       removeRoom={removeRoom}
-      redirectToRoomSettings={redirectToRoomSettings}>
+      redirectToRoomSettings={redirectToRoomSettings}
+      isRoomCreatedByCurrentUser={isRoomCreatedByCurrentUser}>
       <View style={styles.container}>
         <View style={styles.iconContainer}>
           <FontAwesomeIcon
@@ -42,7 +59,19 @@ export default function RoomContainer({
           </View>
         </View>
         <View style={styles.dateContainer}>
-          <Text style={styles.date}>{lastMessageAt}</Text>
+          <View style={styles.topDateContainer}>
+            <Text style={styles.date}>{lastMessageAt}</Text>
+            {isRoomCreatedByCurrentUser && (
+              <View style={styles.ownerIcon}>
+                <FontAwesomeIcon
+                  icon={faUserCog}
+                  color={mainColors.lightGray}
+                  size={12}
+                />
+              </View>
+            )}
+          </View>
+          {isUnreadStatusActive && <View style={styles.unreadStatus} />}
         </View>
       </View>
     </SwipeComponent>
@@ -51,13 +80,12 @@ export default function RoomContainer({
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: 'red',
     backgroundColor: mainColors.darkGray,
-    //flex: 1,
     flexDirection: 'row',
-    borderRadius: 5,
-    // zIndex: 100,
+    borderRadius: 10,
     minHeight: 60,
+    borderWidth: 1,
+    borderColor: mainColors.sand,
     padding: 5,
   },
   iconContainer: {
@@ -66,7 +94,7 @@ const styles = StyleSheet.create({
     flex: 0.15,
   },
   textContainer: {
-    flex: 0.7,
+    flex: 0.6,
     justifyContent: 'center',
   },
   textColumn: {
@@ -83,10 +111,34 @@ const styles = StyleSheet.create({
     color: mainColors.lightGray,
   },
   dateContainer: {
-    flex: 0.25,
+    flex: 0.3,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+  },
+  topDateContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   date: {
     color: mainColors.lightGray,
     textAlign: 'right',
+    fontSize: 12,
+  },
+  ownerIcon: {
+    width: 20,
+    aspectRatio: 1,
+    backgroundColor: mainColors.darkGreen,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  unreadStatus: {
+    backgroundColor: mainColors.darkRed,
+    width: 20,
+    aspectRatio: 1,
+    borderRadius: 10,
+    alignSelf: 'flex-end',
+    marginTop: 5,
   },
 });

@@ -12,11 +12,21 @@ export default class RoomsService {
     }).then((rooms) => rooms.map((room) => new RoomModel(room)));
   };
 
-  static updateRoom = ({roomId, name, description}) => {
+  static updateRoom = ({roomId, name, description, userIds}) => {
+    const body = userIds
+      ? {name, description, users_ids: userIds}
+      : {name, description};
+
     return AuthService.put({
       url: `rooms/${roomId}`,
-      body: {name, description},
+      body,
     }).then((room) => new RoomModel(room));
+  };
+
+  static removeRoom = (roomId) => {
+    return AuthService.delete({
+      url: `rooms/${roomId}`,
+    });
   };
 
   static roomWebSocketSubscribe = async (roomId) => {

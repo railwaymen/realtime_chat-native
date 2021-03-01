@@ -37,6 +37,7 @@ export default function SwipeComponent({
   redirectToRoomSettings,
   children,
   room,
+  isRoomCreatedByCurrentUser,
 }) {
   const [isLeftSwipe, setIsLeftSwipe] = useState(false);
 
@@ -114,6 +115,7 @@ export default function SwipeComponent({
         <PanGestureHandler
           failOffsetY={[-5, 5]}
           activeOffsetX={[-5, 5]}
+          enabled={isRoomCreatedByCurrentUser}
           {...gestureHandler}>
           <Animated.View style={{transform: [{translateX}]}}>
             <TouchableWithoutFeedback onPress={() => onPress(room)}>

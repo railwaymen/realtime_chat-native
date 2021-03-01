@@ -22,7 +22,7 @@ export default function HomeScreen({navigation: {navigate}}) {
     });
   }, []);
 
-  const onPress = (roomDetails) => {
+  const onPress = ({roomDetails, isRoomCreatedByCurrentUser}) => {
     const {
       id: roomId,
       name: roomName,
@@ -32,21 +32,29 @@ export default function HomeScreen({navigation: {navigate}}) {
       type,
     } = roomDetails;
 
+    const isEditMembersEnabled =
+      isRoomCreatedByCurrentUser && type === 'closed';
+
     if (!roomId) {
       return;
     }
 
+    console.log(isEditMembersEnabled);
+
     navigate('ChatStack', {
       screen: 'ChatScreen',
       params: {
-        roomId,
-        roomName,
+        headerTitle: roomName,
+        isEditMembersEnabled,
+        roomDetails,
       },
     });
   };
 
   const removeRoom = ({item: {id}}) => {
-    setRoomsList((prevState) => prevState.filter((room) => room.id !== id));
+    return RoomsService.removeRoom(id).then(() =>
+      setRoomsList((prevState) => prevState.filter((room) => room.id !== id)),
+    );
   };
 
   const redirectToRoomSettings = ({item}) => {
@@ -54,8 +62,7 @@ export default function HomeScreen({navigation: {navigate}}) {
 
     navigate('ChatStack', {
       screen: 'EditRoomScreen',
-      // initial: false,
-      params: {roomName: `Edit Room - ${name}`, roomDetails: item},
+      params: {headerTitle: 'Edit Room Basics', roomDetails: item},
     });
   };
 

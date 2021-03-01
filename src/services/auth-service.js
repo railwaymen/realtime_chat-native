@@ -10,12 +10,7 @@ export default class AuthService {
     const token = await setActiveToken();
     return ApiService.basicRequest({method: 'POST', url, token, body});
   };
-  static put = async ({
-    url,
-    body = {},
-    additionalHeaderParams,
-    isStringify,
-  }) => {
+  static put = async ({url, body, additionalHeaderParams, isStringify}) => {
     const token = await setActiveToken();
     return ApiService.basicRequest({
       method: 'PUT',
@@ -26,7 +21,7 @@ export default class AuthService {
       isStringify,
     });
   };
-  static delete = async ({url, body = {}}) => {
+  static delete = async ({url, body}) => {
     const token = await setActiveToken();
     return ApiService.basicRequest({method: 'DELETE', url, token, body});
   };

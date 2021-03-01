@@ -6,6 +6,7 @@ import AboutStack from '../stacks/drawer-stacks/about-stack';
 import CustomDrawer from '../components/drawer/custom-drawer';
 import UserContext from '../context/user-context';
 import UserService from '../services/user-service';
+import WebSocketHook from '../hooks/web-socket-hook';
 
 const Drawer = createDrawerNavigator();
 
@@ -22,13 +23,15 @@ export default function AuthorizedDrawer() {
   };
 
   return (
-    <Drawer.Navigator
-      drawerContent={({navigation: {navigate}}) => (
-        <CustomDrawer navigate={navigate} />
-      )}>
-      <Drawer.Screen name="AuthorizedStack" component={AuthorizedStack} />
-      <Drawer.Screen name="EditProfileStack" component={EditProfileStack} />
-      <Drawer.Screen name="AboutStack" component={AboutStack} />
-    </Drawer.Navigator>
+    <WebSocketHook>
+      <Drawer.Navigator
+        drawerContent={({navigation: {navigate}}) => (
+          <CustomDrawer navigate={navigate} />
+        )}>
+        <Drawer.Screen name="AuthorizedStack" component={AuthorizedStack} />
+        <Drawer.Screen name="EditProfileStack" component={EditProfileStack} />
+        <Drawer.Screen name="AboutStack" component={AboutStack} />
+      </Drawer.Navigator>
+    </WebSocketHook>
   );
 }

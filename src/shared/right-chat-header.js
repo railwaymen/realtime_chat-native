@@ -4,11 +4,16 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faPlus, faUsersCog} from '@fortawesome/free-solid-svg-icons';
 import mainColors from '../styles/main-colors';
 
-export default function RightChatHeader({navigate}) {
-  //console.log(title);
-
+export default function RightChatHeader({
+  navigate,
+  isEditMembersEnabled,
+  roomDetails,
+}) {
   const editRoomHandler = () => {
-    navigate('EditRoomScreen');
+    navigate('EditRoomMembersScreen', {
+      headerTitle: 'Edit Members',
+      roomDetails,
+    });
   };
 
   return (
@@ -16,9 +21,11 @@ export default function RightChatHeader({navigate}) {
       <TouchableOpacity>
         <FontAwesomeIcon size={22} style={styles.icon} icon={faPlus} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={editRoomHandler}>
-        <FontAwesomeIcon size={22} style={styles.icon} icon={faUsersCog} />
-      </TouchableOpacity>
+      {isEditMembersEnabled && (
+        <TouchableOpacity onPress={editRoomHandler}>
+          <FontAwesomeIcon size={22} style={styles.icon} icon={faUsersCog} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

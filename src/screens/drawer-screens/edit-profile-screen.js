@@ -21,17 +21,17 @@ export default function EditProfileScreen() {
     actionSheetRef.current?.setModalVisible();
   };
 
-  const handleImagePicker = (selectedOption) => {
-    return imagePickerAction(selectedOption).then(({path}) => {
-      setActionSheetVisibility();
-      handleUpload(path);
-    });
-  };
+  const handleImagePicker = async (selectedOption) => {
+    const {path} = await imagePickerAction(selectedOption);
 
-  const handleUpload = (path) => {
-    return UsersService.uploadImage(path).then((res) =>
-      setLoggedUserProfile(res),
-    );
+    setActionSheetVisibility();
+
+    return UsersService.uploadImage(path)
+      .then((res) => {
+        console.log(res);
+        return setLoggedUserProfile(res);
+      })
+      .catch(console.log);
   };
 
   return (
