@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faUsers, faUserCog} from '@fortawesome/free-solid-svg-icons/';
 import UserContext from '../../context/user-context';
 import WebSocketContext from '../../context/web-socket-context';
+import formatDate from '../../helpers/format-date';
 
 export default function RoomContainer({
   room: {item: roomDetails},
@@ -25,16 +26,38 @@ export default function RoomContainer({
   } = roomDetails;
 
   const {
-    loggedUserProfile: {id: currentUserId},
+    loggedUserProfile: {
+      id: currentUserId,
+      roomsActivity: {[`${id}`]: lastRoomActivityAt = ''} = {},
+    },
   } = useContext(UserContext);
-
   const {unreadRoomsIdsStatus} = useContext(WebSocketContext);
-  const [isUnreadStatusActive, setIsUnreadStatusActive] = useState(false);
+  const initialUnreadMessageStatus =
+    (lastRoomActivityAt &&
+      lastMessageAt &&
+      lastRoomActivityAt < lastMessageAt) ||
+    false;
 
-  const isRoomCreatedByCurrentUser = createdByUserID === currentUserId;
+  const [isUnreadStatusActive, setIsUnreadStatusActive] = useState(
+    initialUnreadMessageStatus,
+  );
+  const [formatedLastMessageAt, setFormatedLastMessageAt] = useState(
+    formatDate(lastMessageAt),
+  );
+
+  const isRoomCreatedByCurrentUser =
+    createdByUserID === currentUserId && type !== 'direct';
 
   useEffect(() => {
-    setIsUnreadStatusActive(unreadRoomsIdsStatus.includes(id));
+    const isNewMessageReceived = unreadRoomsIdsStatus.includes(id);
+
+    if (!initialUnreadMessageStatus) {
+      setIsUnreadStatusActive(unreadRoomsIdsStatus.includes(id));
+
+      if (isNewMessageReceived) {
+        setFormatedLastMessageAt(formatDate(Date.now()));
+      }
+    }
   }, [unreadRoomsIdsStatus]);
 
   return (
@@ -44,7 +67,11 @@ export default function RoomContainer({
       removeRoom={removeRoom}
       redirectToRoomSettings={redirectToRoomSettings}
       isRoomCreatedByCurrentUser={isRoomCreatedByCurrentUser}>
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          isUnreadStatusActive && {borderColor: mainColors.darkRed},
+        ]}>
         <View style={styles.iconContainer}>
           <FontAwesomeIcon
             icon={faUsers}
@@ -60,7 +87,9 @@ export default function RoomContainer({
         </View>
         <View style={styles.dateContainer}>
           <View style={styles.topDateContainer}>
-            <Text style={styles.date}>{lastMessageAt}</Text>
+            {lastMessageAt && (
+              <Text style={styles.date}>{formatedLastMessageAt}</Text>
+            )}
             {isRoomCreatedByCurrentUser && (
               <View style={styles.ownerIcon}>
                 <FontAwesomeIcon

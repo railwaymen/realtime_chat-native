@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 import mainColors from '../../styles/main-colors';
@@ -16,16 +16,28 @@ export default function UserContainer({
   onPress = () => {},
   deleteEnabled = false,
   isMarkEnabled = false,
+  isSingleSelection = false,
+  singleSelectonId,
 }) {
   const [isSelected, setIsSelected] = useState(false);
 
+  useEffect(() => {
+    if (isSingleSelection) {
+      setIsSelected(id === singleSelectonId);
+    }
+  }, [singleSelectonId]);
+
   const onIconPress = () => {
     if (isMarkEnabled) {
-      return setIsSelected((prevState) => onPress({id, isSelected: prevState}));
+      if (isSingleSelection) {
+        return onPress({id, isSelected});
+      }
+      const newSelectedState = onPress({id, isSelected});
+      return setIsSelected(newSelectedState);
     } else if (deleteEnabled) {
       return onPress(id);
     }
-    return onPress();
+    return onPress({username, id});
   };
 
   return (
@@ -145,12 +157,5 @@ const styles = StyleSheet.create({
   },
   createSection: {
     backgroundColor: mainColors.darkGreen,
-  },
-  createText: {
-    flexWrap: 'wrap',
-    flex: 0.6,
-    color: mainColors.lightGray,
-    fontSize: 12,
-    textAlign: 'center',
   },
 });

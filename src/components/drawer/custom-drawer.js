@@ -8,7 +8,7 @@ import DrawerNavigationButton from '../drawer/drawer-navigation-button';
 import UserModel from '../../models/user-model';
 import AvatarPlaceholder from '../images/avatar-placeholder';
 
-const CustomDrawer = ({navigate, route}) => {
+const CustomDrawer = ({navigate}) => {
   const {logout} = useContext(AuthContext);
   const {loggedUserProfile} = useContext(UserContext);
   const [userProfile, setUserProfile] = useState(new UserModel({}));
@@ -48,11 +48,21 @@ const CustomDrawer = ({navigate, route}) => {
             />
             <DrawerNavigationButton
               title="Edit Profile"
-              onPress={() => navigate('EditProfileStack')}
+              onPress={() =>
+                navigate('EditProfileStack', {
+                  screen: 'EditProfileScreen',
+                  params: {headerTitle: 'Edit Profile'},
+                })
+              }
             />
             <DrawerNavigationButton
               title="About"
-              onPress={() => navigate('AboutStack')}
+              onPress={() =>
+                navigate('AboutStack', {
+                  screen: 'AboutScreen',
+                  params: {headerTitle: 'About'},
+                })
+              }
             />
           </View>
         </View>

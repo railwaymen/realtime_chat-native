@@ -4,6 +4,8 @@ import BackButton from '../shared/back-button';
 import DrawerButton from '../shared/drawer-button';
 import CustomHeaderTitle from '../shared/custom-header-title';
 import RightChatHeader from '../shared/right-chat-header';
+import LogoWithTitle from '../components/app-headers/logo-with-title';
+import Logo from '../components/app-headers/logo';
 
 export const defaultStackOptions = {
   headerTitle: 'ChatApp',
@@ -20,7 +22,6 @@ export const defaultStackOptions = {
 
 export const defaultTabsHeaderOptions = ({navigation: {openDrawer}}) => {
   return {
-    headerTitle: 'ChatApp',
     headerStyle: {
       backgroundColor: mainColors.darkGray,
       shadowColor: 'transparent',
@@ -30,10 +31,16 @@ export const defaultTabsHeaderOptions = ({navigation: {openDrawer}}) => {
       headerVisible: false,
     },
     headerLeft: () => <DrawerButton openDrawer={openDrawer} />,
+    headerTitle: () => <LogoWithTitle />,
   };
 };
 
-export const aboutStackOptions = ({navigation: {goBack}}) => {
+export const aboutStackOptions = ({
+  navigation: {goBack},
+  route: {
+    params: {headerTitle = ''},
+  },
+}) => {
   return {
     headerStyle: {
       backgroundColor: mainColors.darkGray,
@@ -41,7 +48,8 @@ export const aboutStackOptions = ({navigation: {goBack}}) => {
     },
     headerTintColor: mainColors.lightGray,
     headerLeft: () => <BackButton onPress={goBack} />,
-    headerTitle: () => <CustomHeaderTitle title={'About'} />,
+    headerTitle: () => <CustomHeaderTitle title={headerTitle} />,
+    headerRight: () => <Logo />,
   };
 };
 
@@ -85,10 +93,12 @@ export const chatHeader = ({
         roomDetails={roomDetails}
       />
     ),
+
     headerTitleAlign: 'left',
   };
 };
 
 export const editMembersHeader = ({navigation: {goBack}}) => ({
   headerLeft: () => <BackButton onPress={goBack} />,
+  headerRight: () => <Logo />,
 });

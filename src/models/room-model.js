@@ -17,7 +17,7 @@ export default class RoomModel {
     this.channelName = channel_name;
     this.deleted = deleted;
     this.description = description;
-    this.lastMessageAt = last_message_at && formatDate(last_message_at);
+    this.lastMessageAt = last_message_at;
     this.name = name;
     this.participants = participants;
     this.roomPath = room_path;

@@ -9,8 +9,6 @@ import {
 } from 'react-native';
 import mainColors from '../styles/main-colors';
 import backgroundImage from '../../assets/images/star-wars-unsplash.jpg';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faComments} from '@fortawesome/free-solid-svg-icons/';
 import CustomButtom from '../shared/custom-buttom';
 import logoImage from '../../assets/images/logo.png';
 

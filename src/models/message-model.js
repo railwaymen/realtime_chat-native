@@ -19,9 +19,9 @@ export default class MessageModel {
     this.body = body;
     this.edited = edited;
     this.deleted = deleted;
-    this.user = new UserModel(user);
-    this.attachments = new AttachmentsModel(attachments);
-    this.createdAt = created_at && formatDate(created_at);
+    this.user = new UserModel(user || {});
+    this.attachments = new AttachmentsModel(attachments || {});
+    this.createdAt = created_at;
   }
 }
 

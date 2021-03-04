@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -12,32 +12,45 @@ import {
 import FormInput from '../../components/form-input';
 import CustomButtom from '../../shared/custom-buttom';
 import RoomsService from '../../services/rooms-service';
+import NewRoomContext from '../../context/new-room-context';
 
 import mainColors from '../../styles/main-colors';
 
 export default function EditRoomScreen({
   navigation: {navigate},
-  route: {
-    params: {
-      roomDetails: {id: roomId, name = '', description = ''},
-    },
-  },
+  route: {params: {roomDetails = {}, editRoom = false} = {}},
 }) {
-  const [roomName, setRoomName] = useState(name);
-  const [roomDescription, setRoomDescription] = useState(description);
+  const {newRoom, assignNewRoomAttribiutes} = useContext(NewRoomContext);
+
+  const [room, setRoom] = useState(editRoom ? roomDetails : newRoom);
+  const {id: roomId, name, description, type} = room;
+
+  const onChange = ({name, value}) => {
+    setRoom((prevRoomState) => ({...prevRoomState, [name]: value}));
+  };
 
   const onSave = () => {
-    RoomsService.updateRoom({
+    return RoomsService.updateRoom({
       roomId,
-      name: roomName,
-      description: roomDescription,
-    }).then((res) => {
+      name,
+      description,
+    }).then(() => {
       navigate('AutorizedTabs', {
         screen: 'MessagesScreen',
       });
     });
   };
-  console.log(roomId);
+
+  const onContinue = () => {
+    assignNewRoomAttribiutes({...room});
+
+    if (type === 'open') {
+      return navigate('SummaryScreen');
+    }
+
+    return navigate('RoomMembersScreen');
+  };
+
   return (
     <SafeAreaView style={styles.container} onPress={() => Keyboard.dismiss()}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -48,24 +61,29 @@ export default function EditRoomScreen({
           <View style={styles.formContainer}>
             <View style={styles.formContent}>
               <FormInput
-                onChange={setRoomName}
+                onChange={onChange}
                 placeholder="Room Name"
-                value={roomName}
+                value={name}
+                name="name"
                 label="Name"
                 inputContainerStyle={styles.inputContainerStyle}
                 customInputBorder="black"
               />
               <FormInput
-                onChange={setRoomDescription}
+                onChange={onChange}
                 placeholder="Room Description"
-                value={roomDescription}
+                value={description}
+                name="description"
                 label="Description"
                 inputContainerStyle={styles.inputContainerStyle}
                 customInputBorder="black"
               />
             </View>
           </View>
-          <CustomButtom title="Save" onPress={onSave} />
+          <CustomButtom
+            title={editRoom ? 'Save' : 'Continue'}
+            onPress={editRoom ? onSave : onContinue}
+          />
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </SafeAreaView>

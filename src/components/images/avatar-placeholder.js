@@ -16,7 +16,7 @@ export default function AvatarPlaceholder({
     setDisplayImage(Boolean(url));
   }, [url]);
 
-  return displayImage ? (
+  return displayImage && url ? (
     <BasicAuthImage
       url={url}
       style={containerStyle}

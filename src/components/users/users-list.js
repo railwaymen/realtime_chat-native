@@ -9,6 +9,8 @@ export default function UsersList({
   onPress,
   isMarkEnabled,
   deleteEnabled,
+  isSingleSelection,
+  singleSelectonId,
 }) {
   return (
     <View style={styles.container}>
@@ -20,6 +22,8 @@ export default function UsersList({
             onPress={onPress}
             isMarkEnabled={isMarkEnabled}
             deleteEnabled={deleteEnabled}
+            isSingleSelection={isSingleSelection}
+            singleSelectonId={singleSelectonId}
           />
         )}
         keyExtractor={({id}) => id.toString()}

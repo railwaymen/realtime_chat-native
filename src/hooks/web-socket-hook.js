@@ -1,14 +1,15 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useContext} from 'react';
 
 import WebSocketContext from '../context/web-socket-context';
 import WebSocketService from '../services/web-socket-service';
 import SocketMessage from '../helpers/socket-message';
 import MessageModel from '../models/message-model';
+import UserContext from '../context/user-context';
 
 export default function WebSocketHook({children}) {
   const webSocket = useRef(null);
-  const [subscribedRoomChannelId, setSubscribedRoomChannelId] = useState(null);
   const [unreadRoomsIdsStatus, setUnreadRoomsIdsStatus] = useState([]);
+  const {updateRoomActivity} = useContext(UserContext);
 
   const handleWebSocket = async () => {
     webSocket.current = await WebSocketService.establishConnection();
@@ -23,10 +24,7 @@ export default function WebSocketHook({children}) {
 
       const messageType = message?.type;
 
-      if (
-        messageType === 'room_message_create' &&
-        messageData?.roomId !== subscribedRoomChannelId
-      ) {
+      if (messageType === 'room_message_create') {
         const {roomId} = messageData;
         pushUnreadRoomIdStatus(roomId);
       }
@@ -49,7 +47,6 @@ export default function WebSocketHook({children}) {
     });
 
     webSocket.current.send(JSON.stringify(channelSubscribe));
-    setSubscribedRoomChannelId(roomId);
   };
 
   const pushUnreadRoomIdStatus = (roomId) => {
@@ -57,6 +54,8 @@ export default function WebSocketHook({children}) {
   };
 
   const removeUnreadRoomIdStatus = (idToRemove) => {
+    updateRoomActivity(idToRemove);
+
     setUnreadRoomsIdsStatus((prevState) =>
       prevState.filter((roomId) => roomId !== idToRemove),
     );
@@ -69,7 +68,6 @@ export default function WebSocketHook({children}) {
         handleWebSocket,
         basicSocketEventsBehavior,
         subscribeRoomChannel,
-        setSubscribedRoomChannelId,
         unreadRoomsIdsStatus,
         removeUnreadRoomIdStatus,
       }}>

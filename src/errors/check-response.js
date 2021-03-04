@@ -11,19 +11,17 @@ const CheckResponse = async (response) => {
     //logout
 
     throw new ResponseErrorModel({
-      message: ['unauthorized'],
       name: 'Unauthorized',
       status: status,
+      message: ['unauthorized'],
     });
   } else if (status >= 400 && status < 500) {
     const json = await response.json();
-
+    const [errorMessage] = json.errors.name;
     throw new ResponseErrorModel({
-      message: json.errors,
       name: 'UnprocessableEntity',
       status: status,
-      fullMessage: json,
-      response,
+      message: errorMessage,
     });
   }
 };

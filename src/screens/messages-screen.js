@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   StyleSheet,
   View,
@@ -39,8 +39,6 @@ export default function HomeScreen({navigation: {navigate}}) {
       return;
     }
 
-    console.log(isEditMembersEnabled);
-
     navigate('ChatStack', {
       screen: 'ChatScreen',
       params: {
@@ -62,7 +60,11 @@ export default function HomeScreen({navigation: {navigate}}) {
 
     navigate('ChatStack', {
       screen: 'EditRoomScreen',
-      params: {headerTitle: 'Edit Room Basics', roomDetails: item},
+      params: {
+        headerTitle: 'Edit Room Basics',
+        roomDetails: item,
+        editRoom: true,
+      },
     });
   };
 

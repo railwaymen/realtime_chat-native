@@ -5,7 +5,6 @@ import {faChevronLeft} from '@fortawesome/free-solid-svg-icons';
 import mainColors from '../styles/main-colors';
 
 export default function CustomHeaderTitle({title = ''}) {
-  //console.log(title);
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{title}</Text>

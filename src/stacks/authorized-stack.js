@@ -3,7 +3,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 import AutorizedTabs from './autorized-tabs';
 import {defaultTabsHeaderOptions} from '../stacks/headers-options';
 import ChatStack from './chat-stack';
+import NewGroupStack from '../stacks/new-group-stack';
 import WebSocketContext from '../context/web-socket-context';
+import NewRoomHook from '../hooks/new-room-hook';
 
 const Stack = createStackNavigator();
 
@@ -12,23 +14,31 @@ export default function AuthorizedStack() {
 
   useEffect(() => {
     handleWebSocket();
+
     return () => {
       return webSocket.current.close();
     };
   }, []);
 
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="AutorizedTabs"
-        component={AutorizedTabs}
-        options={defaultTabsHeaderOptions}
-      />
-      <Stack.Screen
-        name="ChatStack"
-        component={ChatStack}
-        options={{headerShown: false}}
-      />
-    </Stack.Navigator>
+    <NewRoomHook>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="AutorizedTabs"
+          component={AutorizedTabs}
+          options={defaultTabsHeaderOptions}
+        />
+        <Stack.Screen
+          name="ChatStack"
+          component={ChatStack}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="NewGroupStack"
+          component={NewGroupStack}
+          options={{headerShown: false}}
+        />
+      </Stack.Navigator>
+    </NewRoomHook>
   );
 }

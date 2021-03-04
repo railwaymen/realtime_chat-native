@@ -6,6 +6,7 @@ export default function FormInput({
   onChange,
   placeholder,
   value,
+  name,
   label = '',
   inputContainerStyle = {},
   customInputBorder = '',
@@ -27,7 +28,7 @@ export default function FormInput({
         ]}>
         <TextInput
           style={styles.textInput}
-          onChangeText={onChange}
+          onChangeText={(v) => onChange({name, value: v})}
           placeholder={placeholder}
           selectionColor={mainColors.creamy}
           onFocus={() => setIsFocused(true)}

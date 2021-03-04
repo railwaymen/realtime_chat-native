@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
   KeyboardAvoidingView,
@@ -35,10 +34,8 @@ export default function ChatContainer({
                 data={messages}
                 renderItem={(message) => <SingleMessage message={message} />}
                 keyExtractor={(message) => message.id.toString()}
-                //   contentContainerStyle={styles.flatlistStyle}
                 onEndReached={onEndReached}
-                // contentContainerStyle={{flex: 1}}
-                //  onEndReachedThreshold={0.5}
+                onEndReachedThreshold={0.5}
                 inverted
               />
               <ChatInput

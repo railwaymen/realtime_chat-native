@@ -2,10 +2,17 @@ import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import mainColors from '../styles/main-colors';
 
-export default function CustomButtom({title = '', onPress}) {
+export default function CustomButtom({
+  title = '',
+  onPress,
+  customContainerStyle = {},
+  customTextStyle = {},
+}) {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-      <Text style={styles.text}>{title}</Text>
+    <TouchableOpacity
+      style={[styles.container, customContainerStyle]}
+      onPress={onPress}>
+      <Text style={[styles.text, customTextStyle]}>{title}</Text>
     </TouchableOpacity>
   );
 }
@@ -18,6 +25,8 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
     justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 40,
     maxHeight: 40,
     width: '80%',
     alignSelf: 'center',

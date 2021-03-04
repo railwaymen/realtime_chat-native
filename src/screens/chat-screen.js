@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, SafeAreaView} from 'react-native';
 import mainColors from '../styles/main-colors';
 import MessagesService from '../services/messages-service';
+import RoomsService from '../services/rooms-service';
 import ChatContainer from '../components/messages/chat-container';
 import MessageModel from '../models/message-model';
 import SocketMessage from '../helpers/socket-message';
@@ -30,6 +31,10 @@ export default class ChatScreen extends Component {
   static contextType = WebSocketContext;
 
   componentDidMount() {
+    this.websocketHandler();
+  }
+
+  componentWillUnmount() {
     const {
       props: {
         route: {
@@ -38,21 +43,12 @@ export default class ChatScreen extends Component {
           },
         },
       },
-      context: {removeUnreadRoomIdStatus},
+      context: {removeUnreadRoomIdStatus, basicSocketEventsBehavior},
     } = this;
 
     removeUnreadRoomIdStatus(roomId);
-    this.websocketHandler();
-  }
-
-  componentWillUnmount() {
-    const {
-      setSubscribedRoomChannelId,
-      basicSocketEventsBehavior,
-    } = this.context;
-
-    setSubscribedRoomChannelId(null);
     basicSocketEventsBehavior();
+    RoomsService.updateRoomActivity(roomId);
   }
 
   websocketHandler = async () => {
@@ -67,12 +63,14 @@ export default class ChatScreen extends Component {
       context: {webSocket, subscribeRoomChannel},
     } = this;
 
-    await subscribeRoomChannel(roomId);
-    await this.getMessages({roomId}).then(() =>
-      this.setState({
-        isLoading: false,
-      }),
-    );
+    if (roomId) {
+      await subscribeRoomChannel(roomId);
+      await this.getMessages({roomId}).then(() =>
+        this.setState({
+          isLoading: false,
+        }),
+      );
+    }
 
     webSocket.current.onmessage = ({data}) => {
       const {type, message} = JSON.parse(data);
