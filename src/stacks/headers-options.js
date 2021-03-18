@@ -82,7 +82,11 @@ export const defaultChatStackOptions = ({
 export const chatHeader = ({
   navigation: {navigate},
   route: {
-    params: {isEditMembersEnabled = false, roomDetails = {}},
+    params: {
+      isEditMembersEnabled = false,
+      roomDetails = {},
+      setActionSheetVisibility = () => {},
+    },
   },
 }) => {
   return {
@@ -91,6 +95,7 @@ export const chatHeader = ({
         navigate={navigate}
         isEditMembersEnabled={isEditMembersEnabled}
         roomDetails={roomDetails}
+        setActionSheetVisibility={setActionSheetVisibility}
       />
     ),
 

@@ -2,7 +2,6 @@ import React, {useState, useContext} from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   Image,
   SafeAreaView,
   KeyboardAvoidingView,
@@ -19,8 +18,11 @@ import CustomButtom from '../shared/custom-buttom';
 import logoImage from '../../assets/images/logo.png';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('user1@example.com');
-  const [password, setPassword] = useState('password');
+  const [formData, setFormData] = useState({
+    email: 'user1@example.com',
+    password: 'password',
+  });
+  const {email, password} = formData;
   const {setIsAutorizedStack} = useContext(AuthContext);
   const {setLoggedUserProfile} = useContext(UserContext);
 
@@ -52,15 +54,17 @@ export default function LoginScreen() {
             </View>
             <View style={styles.formContent}>
               <FormInput
-                onChange={setEmail}
+                onChange={setFormData}
                 placeholder="Your Email"
                 value={email}
+                name="email"
                 label="Email"
               />
               <FormInput
-                onChange={setPassword}
+                onChange={setFormData}
                 placeholder="Your Password"
                 value={password}
+                name="password"
                 label="Password"
               />
             </View>
@@ -84,8 +88,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   formContent: {
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    flex: 0.18,
   },
   keyboard: {
     flex: 1,

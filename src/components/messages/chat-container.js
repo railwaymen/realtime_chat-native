@@ -2,23 +2,29 @@ import React from 'react';
 import {
   View,
   StyleSheet,
-  FlatList,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
 } from 'react-native';
-import SingleMessage from '../messages/single-message';
+
 import ChatInput from '../messages/chat-input';
+import ChatAttachments from '../attachments/chat-attachments';
+import ChatMessagesList from '../messages/chat-messages-list';
 
 export default function ChatContainer({
   messages = [],
+  attachments = [],
   inputMessage = '',
   updateInputMessage,
   sendMessage,
   isLoading = true,
   typingUser,
   onEndReached,
+  onRemoveAttachment,
+  setActionSheetVisibility,
 }) {
+  const isAttachmentsVisible = attachments.length > 0;
+
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView
@@ -30,14 +36,17 @@ export default function ChatContainer({
             <ActivityIndicator style={styles.flatlistStyle} size={'large'} />
           ) : (
             <>
-              <FlatList
-                data={messages}
-                renderItem={(message) => <SingleMessage message={message} />}
-                keyExtractor={(message) => message.id.toString()}
+              <ChatMessagesList
+                messages={messages}
+                setActionSheetVisibility={setActionSheetVisibility}
                 onEndReached={onEndReached}
-                onEndReachedThreshold={0.5}
-                inverted
               />
+              {isAttachmentsVisible && (
+                <ChatAttachments
+                  attachments={attachments}
+                  onRemoveAttachment={onRemoveAttachment}
+                />
+              )}
               <ChatInput
                 inputMessage={inputMessage}
                 updateInputMessage={updateInputMessage}
@@ -66,5 +75,8 @@ const styles = StyleSheet.create({
   },
   keyboard: {
     flex: 1,
+  },
+  flatListContent: {
+    paddingBottom: 10,
   },
 });

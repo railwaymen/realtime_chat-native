@@ -1,5 +1,5 @@
 import ApiService from './api-service';
-import AuthorizationService from './auth-service';
+import AuthService from './auth-service';
 import AuthModel from '../models/auth-model';
 import UserModel from '../models/user-model';
 
@@ -13,13 +13,13 @@ export default class UserService {
   };
 
   static getLoggedUserProfile = () => {
-    return AuthorizationService.get({
+    return AuthService.get({
       url: 'users/profile',
     }).then((userProfile) => new UserModel(userProfile));
   };
 
   static getUsers = () => {
-    return AuthorizationService.get({
+    return AuthService.get({
       url: 'users',
     }).then((users) => users.map((user) => new UserModel(user)));
   };
@@ -35,7 +35,7 @@ export default class UserService {
 
     form.append('avatar', photo);
 
-    return AuthorizationService.put({
+    return AuthService.put({
       url: `users`,
       body: form,
       additionalHeaderParams: {

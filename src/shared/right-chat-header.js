@@ -1,13 +1,15 @@
 import React from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faPlus, faUsersCog} from '@fortawesome/free-solid-svg-icons';
+import {faPlus, faUsersCog, faSearch} from '@fortawesome/free-solid-svg-icons';
 import mainColors from '../styles/main-colors';
+import FormInput from '../components/form-input';
 
 export default function RightChatHeader({
   navigate,
   isEditMembersEnabled,
   roomDetails,
+  setActionSheetVisibility,
 }) {
   const editRoomHandler = () => {
     navigate('EditRoomMembersScreen', {
@@ -16,9 +18,21 @@ export default function RightChatHeader({
     });
   };
 
+  const navigateToSearchScreen = () => {
+    const {id: roomId} = roomDetails;
+
+    navigate('SearchMessagesScreen', {
+      headerTitle: 'Find Message',
+      roomId,
+    });
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={navigateToSearchScreen}>
+        <FontAwesomeIcon size={22} style={styles.icon} icon={faSearch} />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={setActionSheetVisibility}>
         <FontAwesomeIcon size={22} style={styles.icon} icon={faPlus} />
       </TouchableOpacity>
       {isEditMembersEnabled && (

@@ -1,12 +1,19 @@
-import React, {Component} from 'react';
+import React, {Component, createRef} from 'react';
 import {StyleSheet, SafeAreaView} from 'react-native';
+
 import mainColors from '../styles/main-colors';
 import MessagesService from '../services/messages-service';
 import RoomsService from '../services/rooms-service';
+import AttachmentsService from '../services/attachments-services';
 import ChatContainer from '../components/messages/chat-container';
 import MessageModel from '../models/message-model';
 import SocketMessage from '../helpers/socket-message';
 import WebSocketContext from '../context/web-socket-context';
+import ImageActionSheet from '../components/upload-images/image-action-sheet';
+import imagePickerAction from '../components/upload-images/image-picker-action';
+import actionSheetButtonsProp from '../helpers/action-sheet-buttons-prop';
+
+const actionSheetRef = createRef();
 
 const selectEventType = ({message, type}) => {
   if (message?.message === 'typing') {
@@ -26,11 +33,61 @@ export default class ChatScreen extends Component {
       inputMessage: '',
       isLoading: true,
       typingUser: {},
+      attachments: [],
+      actionSheetProp: [],
+      isModalVisible: false,
+      editedMessage: new MessageModel({}),
     };
   }
   static contextType = WebSocketContext;
 
+  setActionSheetVisibility = ({
+    isMessagePressed = false,
+    editedMessage = {},
+  }) => {
+    const {id: messageId} = editedMessage;
+
+    const onClickActions = isMessagePressed
+      ? {
+          onPressFirstOption: this.setEditModalVisibility,
+          onPressSecondOption: () => this.removeMessage(messageId),
+          isMessagePressed,
+        }
+      : {
+          onPressFirstOption: () => this.handleImagePicker('camera'),
+          onPressSecondOption: () => this.handleImagePicker('picker'),
+          isMessagePressed,
+        };
+
+    if (isMessagePressed) {
+      this.setState({editedMessage});
+    }
+
+    const preparedActionSheetProp = actionSheetButtonsProp({
+      ...onClickActions,
+      changeActionSheetState: this.changeActionSheetState,
+    });
+    this.setState({actionSheetProp: preparedActionSheetProp});
+
+    this.changeActionSheetState();
+  };
+
+  changeActionSheetState = () => {
+    actionSheetRef.current?.setModalVisible();
+  };
+
   componentDidMount() {
+    const {
+      props: {
+        navigation: {setParams},
+      },
+      setActionSheetVisibility,
+    } = this;
+
+    setParams({
+      setActionSheetVisibility,
+    });
+
     this.websocketHandler();
   }
 
@@ -106,9 +163,11 @@ export default class ChatScreen extends Component {
 
   getMessages = ({roomId, lastMessageId = null}) => {
     return MessagesService.getMessages({roomId, lastMessageId}).then((res) => {
+      const filteredByDeleted = res.filter(({deleted}) => !deleted);
+
       this.setState((prevState) => {
         return {
-          messages: prevState.messages.concat(res.reverse()),
+          messages: prevState.messages.concat(filteredByDeleted.reverse()),
         };
       });
     });
@@ -121,7 +180,7 @@ export default class ChatScreen extends Component {
 
   sendMessage = () => {
     const {
-      state: {inputMessage},
+      state: {inputMessage = '', attachments},
       props: {
         route: {
           params: {
@@ -131,12 +190,15 @@ export default class ChatScreen extends Component {
       },
     } = this;
 
+    const attachmentsIds = attachments?.map(({id}) => id);
+
     return MessagesService.sendMessage({
       roomId,
       message: inputMessage,
+      attachmentsIds,
     }).then(() => {
       this.updateIsTyping();
-      this.setState({inputMessage: ''});
+      this.setState({inputMessage: '', attachments: []});
     });
   };
 
@@ -177,19 +239,98 @@ export default class ChatScreen extends Component {
     return this.getMessages({roomId, lastMessageId});
   };
 
+  handleImagePicker = async (selectedOption) => {
+    const {path} = await imagePickerAction(selectedOption);
+
+    this.changeActionSheetState();
+
+    return AttachmentsService.uploadAttachment(path).then((attachment) => {
+      this.setState((prevState) => ({
+        attachments: [attachment].concat(prevState.attachments),
+      }));
+    });
+  };
+
+  onRemoveAttachment = (attachmentId) => {
+    return AttachmentsService.removeAttachment(attachmentId).then(() =>
+      this.setState((prevState) => ({
+        attachments: prevState.attachments.filter(
+          ({id}) => id !== attachmentId,
+        ),
+      })),
+    );
+  };
+
+  removeMessage = (messageId) => {
+    return MessagesService.deleteMessage(messageId).then(() => {
+      this.changeActionSheetState();
+
+      this.setState((prevState) => {
+        return {
+          messages: prevState.messages.filter(({id}) => id !== messageId),
+        };
+      });
+    });
+  };
+
+  setEditModalVisibility = () => {
+    this.setState((prevState) => {
+      return {
+        isModalVisible: !prevState.isModalVisible,
+      };
+    });
+  };
+
+  onEditedMessageSave = ({messageId, message}) => {
+    return MessagesService.updateMessage({messageId, message}).then(
+      (updatedMessage) => {
+        this.setState((prevState) => {
+          const replacedMessage = prevState.messages.map((message) =>
+            message.id === messageId ? updatedMessage : message,
+          );
+
+          return {
+            messages: replacedMessage,
+          };
+        });
+      },
+    );
+  };
+
   render() {
-    const {messages, inputMessage, isLoading, typingUser} = this.state;
+    const {
+      messages,
+      inputMessage,
+      isLoading,
+      typingUser,
+      attachments,
+      actionSheetProp,
+      isModalVisible,
+      editedMessage,
+    } = this.state;
 
     return (
       <SafeAreaView style={styles.container}>
         <ChatContainer
           messages={messages}
+          attachments={attachments}
           inputMessage={inputMessage}
           updateInputMessage={this.updateInputMessage}
           sendMessage={this.sendMessage}
           isLoading={isLoading}
           typingUser={typingUser}
           onEndReached={this.onEndReached}
+          onRemoveAttachment={this.onRemoveAttachment}
+          setActionSheetVisibility={this.setActionSheetVisibility}
+        />
+        <ImageActionSheet
+          actionSheetRef={actionSheetRef}
+          preparedActionSheetProp={actionSheetProp}
+          isEditModalVisible={isModalVisible}
+          setEditModalVisibility={this.setEditModalVisibility}
+          changeActionSheetState={this.changeActionSheetState}
+          onEditedMessageSave={this.onEditedMessageSave}
+          editedMessage={editedMessage}
         />
       </SafeAreaView>
     );

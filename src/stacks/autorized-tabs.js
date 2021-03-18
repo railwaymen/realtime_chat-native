@@ -7,7 +7,7 @@ import customBottomBarProp from '../helpers/custom-bottom-bar';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
   faCommentDots,
-  faSearch,
+  faUsers,
   faUserPlus,
 } from '@fortawesome/free-solid-svg-icons/';
 
@@ -23,7 +23,7 @@ export default function AutorizedTab() {
         component={UsersScreen}
         options={{
           tabBarIcon: ({color}) => (
-            <FontAwesomeIcon icon={faSearch} color={color} size={25} />
+            <FontAwesomeIcon icon={faUsers} color={color} size={30} />
           ),
         }}
       />

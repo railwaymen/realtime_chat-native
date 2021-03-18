@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from 'react';
-import {StyleSheet, View, SafeAreaView} from 'react-native';
+import {StyleSheet, View, SafeAreaView, ActivityIndicator} from 'react-native';
 
 import mainColors from '../../styles/main-colors';
 import NewRoomContext from '../../context/new-room-context';
@@ -56,16 +56,26 @@ export default function RoomMembersScreen({navigation: {navigate}}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.contentContainer}>
-        <UsersList
-          users={users}
-          onPress={selectNewUser}
-          isSingleSelection={isSingleSelection}
-          singleSelectonId={singleSelectonId}
-          isMarkEnabled
+      {isLoading ? (
+        <ActivityIndicator
+          style={styles.loading}
+          size={'large'}
+          color={mainColors.sand}
         />
-      </View>
-      <CustomButtom title="Confirm" onPress={onConfirm} />
+      ) : (
+        <>
+          <View style={styles.contentContainer}>
+            <UsersList
+              users={users}
+              onPress={selectNewUser}
+              isSingleSelection={isSingleSelection}
+              singleSelectonId={singleSelectonId}
+              isMarkEnabled
+            />
+          </View>
+          <CustomButtom title="Confirm" onPress={onConfirm} />
+        </>
+      )}
     </SafeAreaView>
   );
 }
@@ -80,5 +90,10 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexDirection: 'column',
     flex: 1,
+  },
+  loading: {
+    flex: 1,
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
 });

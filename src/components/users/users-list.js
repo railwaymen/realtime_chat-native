@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, FlatList} from 'react-native';
+import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
 
 import mainColors from '../../styles/main-colors';
 import UserContainer from '../users/user-container';
+import SearchInput from './search-input';
 
 export default function UsersList({
   users = [],
@@ -12,10 +13,33 @@ export default function UsersList({
   isSingleSelection,
   singleSelectonId,
 }) {
+  const initialValues = {
+    foundUsers: users,
+    inputValue: '',
+  };
+
+  const [searchResult, setSearchResult] = useState(initialValues);
+  const {foundUsers, inputValue} = searchResult;
+
+  onChange = (inputValue) => {
+    const lowerCaseValue = inputValue.split(' ').map((e) => e.toLowerCase());
+
+    const foundUsers = users.filter((user) => {
+      return user.username.toLowerCase().match(lowerCaseValue);
+    });
+
+    setSearchResult({inputValue, foundUsers});
+  };
+
+  onReset = () => {
+    setSearchResult(initialValues);
+  };
+
   return (
     <View style={styles.container}>
+      <SearchInput onChange={onChange} onReset={onReset} value={inputValue} />
       <FlatList
-        data={users}
+        data={foundUsers}
         renderItem={({item}) => (
           <UserContainer
             user={item}

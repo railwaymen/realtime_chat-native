@@ -1,43 +1,36 @@
 import React from 'react';
-import {StyleSheet, View, Text, SafeAreaView} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import mainColors from '../../styles/main-colors';
 import ActionSheet from 'react-native-actions-sheet';
-import imagePicker from './image-picker-action';
 import ActionSheetButton from './action-sheet-button';
+import EditMessageModal from '../messages/edit-message-modal';
 
 export default function ImageActionSheet({
   actionSheetRef,
-  setActionSheetVisibility,
-  handleImagePicker,
+  preparedActionSheetProp,
+  isEditModalVisible = false,
+  setEditModalVisibility,
+  changeActionSheetState,
+  onEditedMessageSave = () => {},
+  editedMessage,
 }) {
-  const actionButtons = [
-    {
-      id: 0,
-      title: 'Camera',
-      onPress: () => handleImagePicker('camera'),
-    },
-    {
-      id: 1,
-      title: 'Gallery',
-      onPress: () => handleImagePicker('picker'),
-    },
-    {
-      id: 2,
-      title: 'Cancel',
-      onPress: setActionSheetVisibility,
-    },
-  ];
-
   return (
     <ActionSheet ref={actionSheetRef} overlayColor={mainColors.sand}>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <Text style={styles.text}>Select Option</Text>
         </View>
-        {actionButtons.map(({id, title, onPress}) => (
+        {preparedActionSheetProp.map(({id, title, onPress}) => (
           <ActionSheetButton key={id} title={title} onPress={onPress} />
         ))}
       </View>
+      <EditMessageModal
+        isEditModalVisible={isEditModalVisible}
+        setEditModalVisibility={setEditModalVisibility}
+        changeActionSheetState={changeActionSheetState}
+        onEditedMessageSave={onEditedMessageSave}
+        editedMessage={editedMessage}
+      />
     </ActionSheet>
   );
 }

@@ -11,7 +11,7 @@ import mainColors from '../styles/main-colors';
 import RoomsService from '../services/rooms-service';
 import RoomContainer from '../components/messages/room-container';
 
-export default function HomeScreen({navigation: {navigate}}) {
+export default function MessagesScreen({navigation: {navigate}}) {
   const [roomsList, setRoomsList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 

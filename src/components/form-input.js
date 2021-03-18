@@ -9,13 +9,16 @@ export default function FormInput({
   name,
   label = '',
   inputContainerStyle = {},
+  labelStyle = {},
   customInputBorder = '',
+  multiline = false,
+  inputTextColor,
 }) {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, labelStyle]}>{label}</Text>
       <View
         style={[
           styles.inputContainer,
@@ -34,7 +37,8 @@ export default function FormInput({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           value={value}
-          color={mainColors.creamy}
+          color={inputTextColor || mainColors.creamy}
+          multiline={multiline}
         />
       </View>
     </View>
@@ -44,6 +48,8 @@ export default function FormInput({
 const styles = StyleSheet.create({
   container: {
     width: '80%',
+    alignSelf: 'center',
+    maxHeight: 150,
   },
   label: {
     color: mainColors.creamy,
@@ -59,6 +65,5 @@ const styles = StyleSheet.create({
   textInput: {
     margin: 10,
     marginHorizontal: 20,
-    color: mainColors.lightBlue,
   },
 });

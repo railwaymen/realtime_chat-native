@@ -17,7 +17,7 @@ const CheckResponse = async (response) => {
     });
   } else if (status >= 400 && status < 500) {
     const json = await response.json();
-    const [errorMessage] = json.errors.name;
+    const [errorMessage] = json.errors?.name;
     throw new ResponseErrorModel({
       name: 'UnprocessableEntity',
       status: status,

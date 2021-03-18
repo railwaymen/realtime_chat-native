@@ -5,7 +5,7 @@ import BasicAuth from '../helpers/basic-auth';
 const BasicAuthImage = ({
   url = '',
   style = {},
-  imageKey = Date.now(),
+  imageKey,
   setDisplayImage = () => {},
 }) => {
   return (

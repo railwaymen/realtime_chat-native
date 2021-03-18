@@ -6,8 +6,8 @@ import imagePickerAction from '../../components/upload-images/image-picker-actio
 import UsersService from '../../services/user-service';
 import CustomButton from '../../shared/custom-buttom';
 import UserContext from '../../context/user-context';
-import BasicAuthImage from '../../shared/basic-auth-image';
 import AvatarPlaceholder from '../../components/images/avatar-placeholder';
+import actionSheetButtonsProp from '../../helpers/action-sheet-buttons-prop';
 
 const actionSheetRef = createRef();
 
@@ -34,6 +34,12 @@ export default function EditProfileScreen() {
       .catch(console.log);
   };
 
+  const actionSheetProp = actionSheetButtonsProp({
+    onPressFirstOption: () => handleImagePicker('camera'),
+    onPressSecondOption: () => handleImagePicker('picker'),
+    setActionSheetVisibility,
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
@@ -50,8 +56,7 @@ export default function EditProfileScreen() {
       </View>
       <ImageActionSheet
         actionSheetRef={actionSheetRef}
-        setActionSheetVisibility={setActionSheetVisibility}
-        handleImagePicker={handleImagePicker}
+        preparedActionSheetProp={actionSheetProp}
       />
     </View>
   );

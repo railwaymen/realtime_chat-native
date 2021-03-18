@@ -20,7 +20,7 @@ export default function RoomContainer({
     name,
     description,
     lastMessageAt,
-    participants,
+    participants = [],
     type,
     userId: createdByUserID,
   } = roomDetails;
@@ -28,6 +28,7 @@ export default function RoomContainer({
   const {
     loggedUserProfile: {
       id: currentUserId,
+      username: currentUserName,
       roomsActivity: {[`${id}`]: lastRoomActivityAt = ''} = {},
     },
   } = useContext(UserContext);
@@ -45,8 +46,18 @@ export default function RoomContainer({
     formatDate(lastMessageAt),
   );
 
+  const findOppositeMemberName = () => {
+    const foundUser = participants.find(
+      ({username}) => username !== currentUserName,
+    );
+
+    return foundUser?.username;
+  };
+
   const isRoomCreatedByCurrentUser =
     createdByUserID === currentUserId && type !== 'direct';
+
+  const roomName = type === 'direct' ? findOppositeMemberName() : name;
 
   useEffect(() => {
     const isNewMessageReceived = unreadRoomsIdsStatus.includes(id);
@@ -81,7 +92,7 @@ export default function RoomContainer({
         </View>
         <View style={styles.textContainer}>
           <View style={styles.textColumn}>
-            <Text style={styles.roomName}>{name}</Text>
+            <Text style={styles.roomName}>{roomName}</Text>
             <Text style={styles.description}>{description}</Text>
           </View>
         </View>

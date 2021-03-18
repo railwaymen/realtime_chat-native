@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import ChatScreen from '../screens/chat-screen';
 import EditRoomScreen from '../screens/edit-room/edit-room-screen';
 import EditRoomMembersScreen from '../screens/edit-room/edit-room-members-screen';
+import SearchMessagesScreen from '../screens/search-messages-screen';
 import {
   defaultChatStackOptions,
   chatHeader,
@@ -25,6 +26,11 @@ export default function ChatStack() {
         name="ChatScreen"
         component={ChatScreen}
         options={chatHeader}
+      />
+      <Stack.Screen
+        name="SearchMessagesScreen"
+        component={SearchMessagesScreen}
+        options={editMembersHeader}
       />
     </Stack.Navigator>
   );
